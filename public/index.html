@@ -145,8 +145,16 @@
           body: JSON.stringify({ email, campaign_id: campaignId }),
         });
 
+        // DEBUG: capture full response so failures surface on-page, no DevTools needed.
+        const bodyText = await res.text();
+
         if (!res.ok) {
-          throw new Error('Request failed with status ' + res.status);
+          btn.disabled = false;
+          statusEl.className = 'status error';
+          statusEl.innerHTML = 'Something went wrong (HTTP ' + res.status + ').<br><br>' +
+            '<pre style="text-align:left;font-size:11px;white-space:pre-wrap;word-break:break-word;background:#f7f7f7;padding:12px;border-radius:6px;">' +
+            bodyText.replace(/</g, '&lt;') + '</pre>';
+          return;
         }
 
         headline.textContent = 'You\'re unsubscribed';
@@ -157,7 +165,7 @@
       } catch (err) {
         btn.disabled = false;
         statusEl.className = 'status error';
-        statusEl.textContent = 'Something went wrong. Reply STOP to any email and we\'ll handle it manually.';
+        statusEl.textContent = 'Something went wrong: ' + err.message;
       }
     }
   </script>
