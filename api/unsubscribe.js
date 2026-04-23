@@ -48,15 +48,8 @@ export default async function handler(req, res) {
   const apiKey = process.env.SMARTLEAD_API_KEY;
   if (!apiKey) {
     console.error('SMARTLEAD_API_KEY not configured');
-    return res.status(500).json({
-      error: 'Server misconfigured',
-      detail: 'SMARTLEAD_API_KEY env var is missing from this deployment',
-    });
+    return res.status(500).json({ error: 'Server misconfigured' });
   }
-
-  // DEBUG: surface a non-sensitive preview of the key so we can confirm
-  // the right value is wired in. Remove after debugging is done.
-  const keyPreview = `${apiKey.slice(0, 4)}...${apiKey.slice(-4)} (len=${apiKey.length})`;
 
   try {
     // Global block list — blocks this email from every campaign (including future ones).
@@ -77,13 +70,7 @@ export default async function handler(req, res) {
     if (!r.ok) {
       const text = await r.text();
       console.error('Smartlead unsub failed', r.status, text);
-      return res.status(502).json({
-        error: 'Upstream failure',
-        smartlead_status: r.status,
-        smartlead_body: text,
-        key_preview: keyPreview,
-        endpoint: 'add-lead-to-global-block-list',
-      });
+      return res.status(502).json({ error: 'Upstream failure' });
     }
 
     // Also log to your own system so you have a record independent of Smartlead.
