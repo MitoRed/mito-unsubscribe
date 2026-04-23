@@ -59,12 +59,12 @@ export default async function handler(req, res) {
   const keyPreview = `${apiKey.slice(0, 4)}...${apiKey.slice(-4)} (len=${apiKey.length})`;
 
   try {
-    // Global unsubscribe — removes the lead from every campaign.
-    // API docs: https://help.smartlead.ai/api
-    const url = `https://server.smartlead.ai/api/v1/leads/add-lead-to-global-block-list?api_key=${encodeURIComponent(apiKey)}`;
+    // Global block list — blocks this email from every campaign (including future ones).
+    // API docs: https://api.smartlead.ai/api-reference/utilities/domain-block-list
+    // NOTE: `domain_block_list` array accepts both domains AND full emails.
+    const url = `https://server.smartlead.ai/api/v1/leads/add-domain-block-list?api_key=${encodeURIComponent(apiKey)}`;
     const body = {
-      domain_block_list: [],
-      email_block_list: [email],
+      domain_block_list: [email],
       client_id: null,
     };
 
